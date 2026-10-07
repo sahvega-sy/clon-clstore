@@ -1,35 +1,13 @@
 import React from 'react';
 import { formatoCLP } from '../lib/validaciones';
 
-// 12345678K -> 12.345.678-K
-function formatearRutVisual(rut) {
-  if (!rut) return '';
-  const limpio = String(rut).replace(/[.\-\s]/g, '').toUpperCase();
-  if (limpio.length < 2) return limpio;
-  const cuerpo = limpio.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  return `${cuerpo}-${limpio.slice(-1)}`;
-}
-
-export default function BoletaModal({
-  show,
-  onClose,
-  numOrden,
-  codigoOrden,
-  cliente,
-  items,
-  total,
-  neto: netoGuardado,
-  iva: ivaGuardado,
-  fechaEmision,
-  rut,
-}) {
+export default function BoletaModal({ show, onClose, numOrden, codigoOrden, cliente, items, total }) {
   if (!show) return null;
 
   // Cálculo de impuestos en Chile (IVA 19%)
-  // Si la boleta viene de la BD usamos sus valores; si no, se calculan aquí
-  const neto = netoGuardado ?? Math.round(total / 1.19);
-  const iva = ivaGuardado ?? total - neto;
-  const fechaActual = (fechaEmision ? new Date(fechaEmision) : new Date()).toLocaleDateString('es-CL', {
+  const neto = Math.round(total / 1.19);
+  const iva = total - neto;
+  const fechaActual = new Date().toLocaleDateString('es-CL', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -151,7 +129,6 @@ export default function BoletaModal({
                 <div className="row mb-3 text-uppercase" style={{ fontSize: '12px' }}>
                   <div className="col-7">
                     <p className="mb-1"><strong>SEÑOR(A):</strong> {cliente?.nombre} {cliente?.apellidos}</p>
-                    {rut && <p className="mb-1"><strong>R.U.T.:</strong> {formatearRutVisual(rut)}</p>}
                     <p className="mb-1"><strong>CORREO:</strong> {cliente?.correo}</p>
                     <p className="mb-1"><strong>DIRECCIÓN:</strong> {cliente?.calle} {cliente?.departamento && `DEPTO ${cliente?.departamento}`}</p>
                     <p className="mb-0"><strong>COMUNA/REG:</strong> {cliente?.comuna}, {cliente?.region}</p>
