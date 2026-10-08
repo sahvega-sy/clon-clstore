@@ -6,11 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { formatoCLP } from '../lib/validaciones';
 import { REGIONES_Y_COMUNAS } from '../data/regionesYComunas';
 import BoletaModal from '../components/boletaModal';
-<<<<<<< HEAD
 import { supabase } from '../lib/supabaseClient';
-=======
-
->>>>>>> 37a79591308ff373fe070a6ba83f504132902063
 export default function Checkout() {
   const { items, total, vaciarCarrito } = useCart();
   const { usuario, perfil } = useAuth();
@@ -115,7 +111,6 @@ export default function Checkout() {
   const handlePagar = async (e) => {
   e.preventDefault();
 
-<<<<<<< HEAD
   if (simularError) {            // el error simulado queda igual que hoy
     setNumOrden(Math.floor(10000000 + Math.random() * 90000000));
     setResumenCompra({ items: [...items], total });
@@ -140,28 +135,6 @@ export default function Checkout() {
   setEstadoPago('exito');
   vaciarCarrito();
 };
-=======
-    // Generar folios y códigos de orden
-    const ordenGen = Math.floor(10000000 + Math.random() * 90000000);
-    const codGen = 'ORDER' + Math.floor(10000 + Math.random() * 90000);
-    setNumOrden(ordenGen);
-    setCodigoOrden(codGen);
-
-    // Guardar snapshot de los datos de compra
-    setResumenCompra({ items: [...items], total });
-
-    if (simularError) {
-      setEstadoPago('error');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    // Pago exitoso
-    setEstadoPago('exito');
-    vaciarCarrito();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
->>>>>>> 37a79591308ff373fe070a6ba83f504132902063
 
   const handleEnviarBoleta = () => {
     Swal.fire({
@@ -266,7 +239,6 @@ export default function Checkout() {
             /* A. MIENTRAS SE LLENA EL CHECKOUT (INPUTS ACTIVOS) */
             <fieldset className="border-0 p-0 m-0">
               <div className="row g-3 mb-4">
-<<<<<<< HEAD
                 {/* INPUT RUT */}
                 <div className="col-md-3">
                   <label className="form-label text-muted small fw-semibold">RUT*</label>
@@ -281,8 +253,6 @@ export default function Checkout() {
                   />
                 </div>
                 
-=======
->>>>>>> 37a79591308ff373fe070a6ba83f504132902063
                 <div className="col-md-4">
                   <label className="form-label text-muted small fw-semibold">Nombre*</label>
                   <input
@@ -294,10 +264,7 @@ export default function Checkout() {
                     required
                   />
                 </div>
-<<<<<<< HEAD
                 
-=======
->>>>>>> 37a79591308ff373fe070a6ba83f504132902063
 
                 <div className="col-md-4">
                   <label className="form-label text-muted small fw-semibold">Apellidos*</label>
@@ -310,10 +277,7 @@ export default function Checkout() {
                     required
                   />
                 </div>
-<<<<<<< HEAD
                 
-=======
->>>>>>> 37a79591308ff373fe070a6ba83f504132902063
 
                 <div className="col-md-4">
                   <label className="form-label text-muted small fw-semibold">Correo*</label>
