@@ -68,25 +68,8 @@ export default function AdminReportes() {
     return { ordenesPeriodo, exitosas, fallidas, ventas, unidades, stockBajo, tipoUsuarios, ventasPorDia, topProductos };
   }, [datos, fechaDesde, fechaHasta]);
 
-  function exportarCSV() {
-    const filas = [['ID', 'Fecha', 'Comprador', 'Comuna', 'Estado', 'Total'], ...resumen.ordenesPeriodo.map((o) => [o.id, o.creado_en, `${o.nombre_comprador || ''} ${o.apellidos_comprador || ''}`.trim(), o.comuna || '', o.estado, o.total])];
-    const csv = filas.map((fila) => fila.map((valor) => `"${String(valor ?? '').replace(/"/g, '""')}"`).join(';')).join('\r\n');
-    const blob = new Blob(['\ufeff', csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const enlace = document.createElement('a');
-    enlace.href = url;
-    enlace.download = `reporte-clstore-${fechaDesde || 'inicio'}-${fechaHasta || 'hoy'}.csv`;
-    enlace.click();
-    URL.revokeObjectURL(url);
-  }
-
   return (
     <section className="p-4">
-      <div className="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
-        <div><h4 className="fw-bold mb-1"><i className="fa-solid fa-chart-line me-2"></i>Reportes del sistema</h4><p className="text-muted mb-0">Resumen de ventas, órdenes, inventario, usuarios y contenido.</p></div>
-        <div className="d-flex gap-2 flex-wrap"><button className="btn btn-outline-secondary rounded-pill" onClick={cargarReportes}><i className="fa-solid fa-rotate me-2"></i>Actualizar</button><button className="btn btn-primary rounded-pill" onClick={exportarCSV}><i className="fa-solid fa-file-csv me-2"></i>Exportar órdenes CSV</button></div>
-      </div>
-
       <div className="card border-0 shadow-sm rounded-3 mb-4"><div className="card-body"><div className="row g-3 align-items-end">
         <div className="col-sm-5 col-md-4"><label className="form-label fw-semibold">Desde</label><input type="date" className="form-control" value={fechaDesde} max={fechaHasta || undefined} onChange={(e) => setFechaDesde(e.target.value)} /></div>
         <div className="col-sm-5 col-md-4"><label className="form-label fw-semibold">Hasta</label><input type="date" className="form-control" value={fechaHasta} min={fechaDesde || undefined} onChange={(e) => setFechaHasta(e.target.value)} /></div>
