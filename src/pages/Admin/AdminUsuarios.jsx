@@ -79,13 +79,28 @@ export default function AdminUsuarios() {
       });
 
       if (error) {
-        let detalle = error.message;
-        try {
-          const cuerpo = await error.context.json();
-          detalle = cuerpo.error || detalle;
-        } catch {
+        console.error('Error al crear usuario:', error);
+
+        if (error.context) {
+          try {
+            console.error(
+              'Respuesta de Supabase:',
+              await error.context.clone().json()
+            );
+          } catch {
+            console.error(
+              'Respuesta de texto:',
+              await error.context.clone().text()
+            );
+          }
         }
-        Swal.fire('No se pudo crear el usuario', detalle, 'error');
+
+        Swal.fire(
+          'No se pudo crear el usuario',
+          error.message || 'Error desconocido',
+          'error'
+        );
+
         return;
       }
     }

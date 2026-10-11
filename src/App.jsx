@@ -7,8 +7,11 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 import Home from './pages/Home';
 import Productos from './pages/Productos';
+import Ofertas from './pages/Ofertas';
 import DetalleProducto from './pages/DetalleProducto';
 import Carrito from './pages/Carrito';
+import Checkout from './pages/Checkout';
+import ResumenCompra from './pages/ResumenCompra';
 import Contacto from './pages/Contacto';
 import Nosotros from './pages/Nosotros';
 import Blogs from './pages/Blogs';
@@ -16,8 +19,6 @@ import BlogDetalle from './pages/BlogDetalle';
 import Registro from './pages/Registro';
 import InicioSesion from './pages/InicioSesion';
 import AdminLayout from './pages/Admin/AdminLayout';
-import Checkout from './pages/Checkout';
-import Ofertas from './pages/Ofertas';
 
 function Layout({ children }) {
   return (
@@ -41,8 +42,11 @@ export default function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/productos" element={<Productos />} />
                 <Route path="/productos/:id" element={<DetalleProducto />} />
-                <Route path="/carrito" element={<Carrito />} />
                 <Route path="/ofertas" element={<Ofertas />} />
+                <Route path="/carrito" element={<Carrito />} />
+                <Route path="/pagar" element={<Checkout />} />
+                <Route path="/resumen-compra" element={<ResumenCompra />} />
+                <Route path="/resumen-compra/:ordenId" element={<ResumenCompra />} />
                 <Route path="/contacto" element={<Contacto />} />
                 <Route path="/nosotros" element={<Nosotros />} />
                 <Route path="/blogs" element={<Blogs />} />
@@ -50,7 +54,6 @@ export default function App() {
                 <Route path="/registro" element={<Registro />} />
                 <Route path="/iniciar-sesion" element={<InicioSesion />} />
                 <Route path="*" element={<Home />} />
-                <Route path="/checkout" element={<Checkout />} />
               </Routes>
             </Layout>
           } />

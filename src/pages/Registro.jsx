@@ -49,8 +49,8 @@ export default function Registro() {
       Swal.fire('Error de Correo', 'Los correos electrónicos ingresados no coinciden.', 'error');
       return;
     }
-    if (password.length < 4 || password.length > 10) {
-      Swal.fire('Contraseña Inválida', 'La contraseña debe tener entre 4 y 10 caracteres.', 'error');
+    if (password.length < 6 || password.length > 10) {
+      Swal.fire('Contraseña Inválida', 'La contraseña debe tener entre 6 y 10 caracteres.', 'error');
       return;
     }
     if (password !== confirmarPassword) {
@@ -59,7 +59,7 @@ export default function Registro() {
     }
 
     setEnviando(true);
-    const { error, necesitaConfirmacion } = await signUp({
+    const { error } = await signUp({
       correo,
       password,
       run: formatearRun(run),
@@ -79,11 +79,11 @@ export default function Registro() {
 
     Swal.fire({
       title: '¡Registro Exitoso!',
-      text: necesitaConfirmacion
-        ? 'Revisa tu correo para confirmar la cuenta antes de iniciar sesión.'
-        : 'Tu cuenta se ha creado correctamente. Redirigiendo...',
+      text: 'Tu cuenta se ha creado correctamente. Redirigiendo...',
       icon: 'success',
-    }).then(() => navigate('/iniciar-sesion'));
+      timer: 1500,
+      showConfirmButton: false,
+    }).then(() => navigate('/'));
   }
 
   return (
@@ -127,8 +127,8 @@ export default function Registro() {
 
             <div className="mb-3 text-start">
               <label className="form-label fw-bold">Contraseña</label>
-              <input type="password" className="form-control border-0" minLength={4} maxLength={10} style={inputStyle} value={form.password} onChange={(e) => actualizar('password', e.target.value)} required />
-              <small className="text-white-50">Entre 4 y 10 caracteres.</small>
+              <input type="password" className="form-control border-0" minLength={6} maxLength={10} style={inputStyle} value={form.password} onChange={(e) => actualizar('password', e.target.value)} required />
+              <small className="text-white-50">Entre 6 y 10 caracteres.</small>
             </div>
 
             <div className="mb-3 text-start">

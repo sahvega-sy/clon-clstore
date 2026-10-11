@@ -14,7 +14,7 @@ const SECCIONES = [
   { id: 'ordenes', etiqueta: 'Órdenes', icono: 'fa-receipt' },
   { id: 'productos', etiqueta: 'Productos', icono: 'fa-boxes-stacked' },
   { id: 'categorias', etiqueta: 'Categorías', icono: 'fa-layer-group' },
-  { id: 'blogs', etiqueta: 'Blogs', icono: 'fa-blog', soloAdmin: true },
+  { id: 'blogs', etiqueta: 'Blogs', icono: 'fa-blog'},
   { id: 'reportes', etiqueta: 'Reportes', icono: 'fa-chart-line', soloAdmin: true },
   { id: 'usuarios', etiqueta: 'Usuarios', icono: 'fa-users', soloAdmin: true },
 ];

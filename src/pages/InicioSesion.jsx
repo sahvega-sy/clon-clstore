@@ -65,14 +65,14 @@ export default function InicioSesion() {
               <input
                 type="password"
                 className="form-control border-0"
-                minLength={4}
+                minLength={6}
                 maxLength={10}
                 style={{ backgroundColor: '#fdf6e2', color: '#212529' }}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <small className="text-white-50">Entre 4 y 10 caracteres.</small>
+              <small className="text-white-50">Entre 6 y 10 caracteres.</small>
             </div>
 
             <div className="mt-4">

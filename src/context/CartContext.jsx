@@ -6,12 +6,9 @@ import { calcularPrecioFinal } from '../lib/validaciones';
 
 const CartContext = createContext(null);
 
-// Sustituye a localStorage("carrito"):
-// - Si hay sesión, el carrito vive en la tabla "carrito_items" de Supabase (persiste entre dispositivos).
-// - Si es invitado, el carrito vive solo en memoria (React state) mientras dura la visita.
 export function CartProvider({ children }) {
   const { usuario } = useAuth();
-  const [items, setItems] = useState([]); // { producto_id, cantidad, productos: {nombre, precio, imagen, descuento_porcentaje} }
+  const [items, setItems] = useState([]); 
   const [cargando, setCargando] = useState(false);
 
   const cargarCarritoSupabase = useCallback(async () => {

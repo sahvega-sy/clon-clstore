@@ -1,3 +1,4 @@
+// Validaciones portadas 1:1 desde el proyecto original (js/Registro.js y js/admin.js)
 
 export function validarRunChileno(run) {
   const runLimpio = run.replace(/[.\-\s]/g, '').toUpperCase();
@@ -40,4 +41,14 @@ export function formatoCLP(valor) {
     currency: 'CLP',
     maximumFractionDigits: 0,
   }).format(valor || 0);
+}
+
+// Calcula el precio final de un producto considerando su descuento (si tiene).
+// producto.descuento_porcentaje es un entero 1-95 o null/0 si no está en oferta.
+export function calcularPrecioFinal(producto) {
+  const descuento = Number(producto?.descuento_porcentaje) || 0;
+  const precioOriginal = Number(producto?.precio) || 0;
+  const enOferta = descuento > 0;
+  const precioFinal = enOferta ? Math.round(precioOriginal * (1 - descuento / 100)) : precioOriginal;
+  return { precioOriginal, precioFinal, enOferta, descuento };
 }
