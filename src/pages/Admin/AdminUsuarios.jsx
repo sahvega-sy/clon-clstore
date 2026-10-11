@@ -59,34 +59,33 @@ export default function AdminUsuarios() {
       Swal.fire('Datos incompletos', 'Completa todos los campos obligatorios.', 'error');
       return;
     }
-    if (!esEdicion && (password.length < 4 || password.length > 10)) {
-      Swal.fire('Contraseña inválida', 'La contraseña debe tener entre 4 y 10 caracteres.', 'error');
+    // Supabase Auth exige 6 caracteres como mínimo por defecto.
+    if (!esEdicion && (password.length < 6 || password.length > 10)) {
+      Swal.fire('Contraseña inválida', 'La contraseña debe tener entre 6 y 10 caracteres.', 'error');
       return;
     }
 
     if (esEdicion) {
-      // Actualiza los datos de negocio en "perfiles". El correo/contraseña de Auth
-      // no se pueden cambiar desde aquí sin privilegios de administrador de Supabase
-      // (ver nota de la Edge Function en el README).
       const { error } = await supabase
         .from('perfiles')
         .update({ tipo, nombre, apellidos, correo, fecha_nacimiento: fechaNacimiento || null, region, comuna, direccion })
         .eq('id', form.id);
       if (error) { Swal.fire('Error', error.message, 'error'); return; }
     } else {
-      // Crear un usuario nuevo (con su propia cuenta de Auth) desde el panel admin
-      // requiere la Edge Function "create-user" incluida en /supabase/functions.
       const { data: sesionActual } = await supabase.auth.getSession();
       const { error } = await supabase.functions.invoke('create-user', {
         body: { run: runFormateado, tipo, nombre, apellidos, correo, fechaNacimiento, password, region, comuna, direccion },
         headers: { Authorization: `Bearer ${sesionActual.session?.access_token}` },
       });
+
       if (error) {
-        Swal.fire(
-          'No se pudo crear el usuario',
-          'Revisa que la Edge Function "create-user" esté desplegada en tu proyecto de Supabase (ver README). Detalle: ' + error.message,
-          'error'
-        );
+        let detalle = error.message;
+        try {
+          const cuerpo = await error.context.json();
+          detalle = cuerpo.error || detalle;
+        } catch {
+        }
+        Swal.fire('No se pudo crear el usuario', detalle, 'error');
         return;
       }
     }
@@ -107,8 +106,6 @@ export default function AdminUsuarios() {
     });
     if (!resultado.isConfirmed) return;
 
-    // Borra el perfil. Para borrar también la cuenta de Auth se necesita la misma
-    // Edge Function con privilegios de servicio (ver README).
     const { error } = await supabase.from('perfiles').delete().eq('id', u.id);
     if (error) { Swal.fire('Error', error.message, 'error'); return; }
     await cargarUsuarios();
@@ -209,11 +206,11 @@ export default function AdminUsuarios() {
                 </div>
                 <div className="col-md-6">
                   <label className="form-label fw-semibold">Contraseña {esEdicion ? '' : '*'}</label>
-                  <input type="password" className="form-control" minLength={4} maxLength={10}
-                    placeholder={esEdicion ? 'No editable desde aquí' : 'Entre 4 y 10 caracteres'}
+                  <input type="password" className="form-control" minLength={6} maxLength={10}
+                    placeholder={esEdicion ? 'No editable desde aquí' : 'Entre 6 y 10 caracteres'}
                     disabled={esEdicion}
                     value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-                  <small className="text-muted">{esEdicion ? 'La contraseña la cambia el propio usuario.' : 'Requerida (entre 4 y 10 caracteres).'}</small>
+                  <small className="text-muted">{esEdicion ? 'La contraseña la cambia el propio usuario.' : 'Requerida (entre 6 y 10 caracteres).'}</small>
                 </div>
                 <div className="col-md-6">
                   <label className="form-label fw-semibold">Región *</label>

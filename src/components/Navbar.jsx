@@ -24,11 +24,8 @@ export default function Navbar() {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 fw-semibold">
             <li className="nav-item"><NavLink className={linkClass} to="/">Home</NavLink></li>
-            
-            {/* NUEVA OPCIÓN DE CATEGORÍAS */}
-            <li className="nav-item"><NavLink className={linkClass} to="/categorias">Categorías</NavLink></li>
-            
             <li className="nav-item"><NavLink className={linkClass} to="/productos">Productos</NavLink></li>
+            <li className="nav-item"><NavLink className={linkClass} to="/ofertas">Ofertas</NavLink></li>
             <li className="nav-item"><NavLink className={linkClass} to="/nosotros">Nosotros</NavLink></li>
             <li className="nav-item"><NavLink className={linkClass} to="/blogs">Blogs</NavLink></li>
             <li className="nav-item"><NavLink className={linkClass} to="/contacto">Contacto</NavLink></li>
@@ -46,7 +43,7 @@ export default function Navbar() {
                 )}
                 <li className="nav-item">
                   <button className="nav-link btn btn-link" onClick={signOut} style={{ border: 'none' }}>
-                    Salir ({perfil?.nombre || usuario.email})
+                    Salir ({perfil?.nombre || perfil?.correo})
                   </button>
                 </li>
               </>

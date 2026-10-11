@@ -1,23 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { formatoCLP } from '../lib/validaciones';
+import { formatoCLP, calcularPrecioFinal } from '../lib/validaciones';
 
 export default function Carrito() {
   const { items, total, cambiarCantidad, eliminarProducto } = useCart();
   const { usuario } = useAuth();
   const navigate = useNavigate();
 
-  // Función para ir al Checkout
-  const irAlCheckout = () => {
-    navigate('/checkout');
-  };
-
   return (
     <div className="container my-5">
-      <h2 className="fw-bold mb-4">
-        <i className="fa-solid fa-cart-shopping me-2"></i>Tu Carrito
-      </h2>
+      <h2 className="fw-bold mb-4"><i className="fa-solid fa-cart-shopping me-2"></i>Tu Carrito</h2>
 
       {!usuario && (
         <div className="alert alert-warning">
@@ -44,16 +37,26 @@ export default function Carrito() {
                   <tbody>
                     {items.map((it) => {
                       const p = it.productos || {};
-                      const subtotal = (p.precio || 0) * it.cantidad;
+                      const { precioFinal, enOferta, precioOriginal } = calcularPrecioFinal(p);
+                      const subtotal = precioFinal * it.cantidad;
                       return (
                         <tr key={it.producto_id}>
                           <td>
                             <div className="d-flex align-items-center">
                               <img src={p.imagen} className="cart-item-thumb" alt={p.nombre} />
-                              <span className="cart-item-name ms-2">{p.nombre}</span>
+                              <span className="cart-item-name">{p.nombre}</span>
                             </div>
                           </td>
-                          <td className="cart-item-price">{formatoCLP(p.precio)}</td>
+                          <td className="cart-item-price">
+                            {enOferta ? (
+                              <>
+                                <span className="text-muted text-decoration-line-through me-1 small">{formatoCLP(precioOriginal)}</span>
+                                <span className="text-danger fw-semibold">{formatoCLP(precioFinal)}</span>
+                              </>
+                            ) : (
+                              formatoCLP(precioFinal)
+                            )}
+                          </td>
                           <td>
                             <div className="qty-control">
                               <button className="qty-btn" onClick={() => cambiarCantidad(it.producto_id, -1)}>
@@ -81,7 +84,7 @@ export default function Carrito() {
               <div className="text-center py-5">
                 <i className="fa-solid fa-cart-flatbed-suitcases fa-3x text-muted mb-3"></i>
                 <p className="fs-5 text-muted">Tu carrito está vacío.</p>
-                <Link to="/productos" className="btn btn-primary rounded-pill">Ver Productos</Link>
+                <Link to="/" className="btn btn-primary rounded-pill">Ver Productos</Link>
               </div>
             )}
           </div>
@@ -103,12 +106,10 @@ export default function Carrito() {
               <span className="fw-bold">Total:</span>
               <span className="fw-bold text-primary">{formatoCLP(total)}</span>
             </div>
-            
-            {/* BOTÓN QUE REDIRIGE AL CHECKOUT */}
             <button
               className="btn btn-primary rounded-pill w-100 py-2 fw-bold"
               disabled={items.length === 0}
-              onClick={irAlCheckout}
+              onClick={() => navigate('/pagar')}
             >
               Proceder al Pago
             </button>

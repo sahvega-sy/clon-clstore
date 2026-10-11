@@ -2,12 +2,16 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 import Swal from 'sweetalert2';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from './AuthContext';
+import { calcularPrecioFinal } from '../lib/validaciones';
 
 const CartContext = createContext(null);
 
+// Sustituye a localStorage("carrito"):
+// - Si hay sesión, el carrito vive en la tabla "carrito_items" de Supabase (persiste entre dispositivos).
+// - Si es invitado, el carrito vive solo en memoria (React state) mientras dura la visita.
 export function CartProvider({ children }) {
   const { usuario } = useAuth();
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([]); // { producto_id, cantidad, productos: {nombre, precio, imagen, descuento_porcentaje} }
   const [cargando, setCargando] = useState(false);
 
   const cargarCarritoSupabase = useCallback(async () => {
@@ -15,7 +19,7 @@ export function CartProvider({ children }) {
     setCargando(true);
     const { data, error } = await supabase
       .from('carrito_items')
-      .select('id, producto_id, cantidad, productos ( id, nombre, precio, imagen )')
+      .select('id, producto_id, cantidad, productos ( id, nombre, precio, imagen, descuento_porcentaje, stock )')
       .eq('usuario_id', usuario.id);
     if (!error) setItems(data || []);
     setCargando(false);
@@ -58,7 +62,10 @@ export function CartProvider({ children }) {
           {
             producto_id: producto.id,
             cantidad: 1,
-            productos: { id: producto.id, nombre: producto.nombre, precio: producto.precio, imagen: producto.imagen },
+            productos: {
+              id: producto.id, nombre: producto.nombre, precio: producto.precio,
+              imagen: producto.imagen, descuento_porcentaje: producto.descuento_porcentaje, stock: producto.stock,
+            },
           },
         ];
       });
@@ -111,7 +118,10 @@ export function CartProvider({ children }) {
     setItems([]);
   }
 
-  const total = items.reduce((acc, it) => acc + (it.productos?.precio || 0) * it.cantidad, 0);
+  const total = items.reduce((acc, it) => {
+    const { precioFinal } = calcularPrecioFinal(it.productos);
+    return acc + precioFinal * it.cantidad;
+  }, 0);
 
   const value = { items, cargando, total, agregarProducto, cambiarCantidad, eliminarProducto, vaciarCarrito };
 
