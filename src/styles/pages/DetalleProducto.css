@@ -1,0 +1,4 @@
+/* Ficha de producto */
+body:has(.card-product) .container.my-5 { max-width: 1320px; }
+body:has(.card-product) .card { border: 1px solid var(--cl-border); }
+body:has(.card-product) .card h2, body:has(.card-product) .card h3 { letter-spacing: -.025em; }

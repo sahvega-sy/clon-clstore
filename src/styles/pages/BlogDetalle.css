@@ -1,0 +1,3 @@
+/* Artículo */
+body:has(article) article { max-width: 850px; margin-inline: auto; line-height: 1.85; }
+body:has(article) article img { max-width: 100%; border-radius: 18px; }

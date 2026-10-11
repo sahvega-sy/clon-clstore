@@ -1,0 +1,3 @@
+/* Blog */
+body:has(a[href^="/blogs/"]) .container.my-5 { max-width: 1260px; }
+body:has(a[href^="/blogs/"]) .card { overflow: hidden; }
