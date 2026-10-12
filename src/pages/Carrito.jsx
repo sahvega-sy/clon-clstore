@@ -59,18 +59,18 @@ export default function Carrito() {
                           </td>
                           <td>
                             <div className="qty-control">
-                              <button className="qty-btn" onClick={() => cambiarCantidad(it.producto_id, -1)}>
+                              <button className="qty-btn" aria-label={`Disminuir cantidad de ${p.nombre}`} onClick={() => cambiarCantidad(it.producto_id, -1)}>
                                 <i className="fa-solid fa-minus"></i>
                               </button>
                               <span className="qty-value">{it.cantidad}</span>
-                              <button className="qty-btn" onClick={() => cambiarCantidad(it.producto_id, 1)}>
+                              <button className="qty-btn" aria-label={`Aumentar cantidad de ${p.nombre}`} onClick={() => cambiarCantidad(it.producto_id, 1)}>
                                 <i className="fa-solid fa-plus"></i>
                               </button>
                             </div>
                           </td>
                           <td className="cart-item-subtotal">{formatoCLP(subtotal)}</td>
                           <td className="text-end">
-                            <button className="btn-remove-item" onClick={() => eliminarProducto(it.producto_id)}>
+                            <button className="btn-remove-item" aria-label={`Eliminar ${p.nombre}`} onClick={() => eliminarProducto(it.producto_id)}>
                               <i className="fa-solid fa-trash"></i>
                             </button>
                           </td>

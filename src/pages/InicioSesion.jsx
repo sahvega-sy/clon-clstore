@@ -46,8 +46,8 @@ export default function InicioSesion() {
             style={{ backgroundColor: '#212529', borderTop: '4px solid rgb(85,205,58)' }}
           >
             <div className="mb-3">
-              <label className="form-label fw-bold">Correo</label>
-              <input
+              <label htmlFor="login-correo" className="form-label fw-bold">Correo</label>
+              <input id="login-correo"
                 type="email"
                 className="form-control border-0"
                 placeholder="ejemplo@duoc.cl"
@@ -61,8 +61,8 @@ export default function InicioSesion() {
             </div>
 
             <div className="mb-3">
-              <label className="form-label fw-bold">Contraseña</label>
-              <input
+              <label htmlFor="login-password" className="form-label fw-bold">Contraseña</label>
+              <input id="login-password"
                 type="password"
                 className="form-control border-0"
                 minLength={6}

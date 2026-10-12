@@ -16,24 +16,87 @@ export default function AdminReportes() {
   const [fechaHasta, setFechaHasta] = useState(fechaHoy);
   const [datos, setDatos] = useState({ ordenes: [], productos: [], perfiles: [], blogs: [], items: [] });
 
-  async function cargarReportes() {
-    setCargando(true);
-    setErrorCarga('');
-    const [ordenesRes, productosRes, perfilesRes, blogsRes, itemsRes] = await Promise.all([
-      supabase.from('ordenes').select('id, total, estado, creado_en, nombre_comprador, apellidos_comprador, comuna, folio, codigo_boleta').order('creado_en', { ascending: false }),
-      supabase.from('productos').select('id, nombre, categoria, precio, stock, stock_critico'),
-      supabase.from('perfiles').select('id, tipo, created_at'),
-      supabase.from('blogs').select('id, titulo, created_at'),
-      supabase.from('orden_items').select('orden_id, nombre_producto, cantidad, precio_unitario'),
-    ]);
-    const fallos = [ordenesRes, productosRes, perfilesRes, blogsRes, itemsRes].filter((r) => r.error);
-    if (fallos.length) setErrorCarga(`No se pudieron cargar todos los datos. ${fallos.map((r) => r.error.message).join(' · ')}`);
-    setDatos({
-      ordenes: ordenesRes.data || [], productos: productosRes.data || [], perfiles: perfilesRes.data || [],
-      blogs: blogsRes.data || [], items: itemsRes.data || [],
+
+async function cargarReportes() {
+  setCargando(true);
+  setErrorCarga('');
+  try {
+    const consultas = [
+      ['órdenes', supabase
+        .from('ordenes')
+        
+.select('id, total, estado, creado_en, nombre_comprador, apellidos_comprador, comuna')
+
+        .order('creado_en', { ascending: false })],
+
+      ['productos', supabase
+        .from('productos')
+        .select('id, nombre, categoria, precio, stock, stock_critico')],
+
+      ['perfiles', supabase
+        .from('perfiles')
+        .select('id, tipo, created_at')],
+
+      ['blogs', supabase
+        .from('blogs')
+        .select('id, titulo, created_at')],
+
+      ['artículos de órdenes', supabase
+        .from('orden_items')
+        .select('orden_id, nombre_producto, cantidad, precio_unitario')],
+    ];
+    const resultados = await Promise.all(
+      consultas.map(async ([nombre, consulta]) => ({
+        nombre,
+        ...(await consulta),
+      }))
+    );
+    const nuevosDatos = {
+      ordenes: [],
+      productos: [],
+      perfiles: [],
+      blogs: [],
+      items: [],
+    };
+    const equivalencias = {
+      'órdenes': 'ordenes',
+      productos: 'productos',
+      perfiles: 'perfiles',
+      blogs: 'blogs',
+      'artículos de órdenes': 'items',
+    };
+
+    const errores = [];
+    resultados.forEach((resultado) => {
+      if (resultado.error) {
+        errores.push(
+          `${resultado.nombre}: ${resultado.error.message}`
+        );
+        console.error(
+        `Error consultando ${resultado.nombre}:`,
+        JSON.stringify(resultado.error, null, 2)
+      );
+      } else {
+        nuevosDatos[equivalencias[resultado.nombre]] =
+          resultado.data || [];
+      }
     });
+    setDatos(nuevosDatos);
+    if (errores.length) {
+      setErrorCarga(errores.join(' · '));
+    }
+    console.log(
+      'Órdenes recuperadas desde Supabase:',
+      nuevosDatos.ordenes.length
+    );
+  } catch (error) {
+    console.error('Error al cargar reportes:', error);
+    setErrorCarga(error.message || 'Error inesperado al cargar reportes.');
+  } finally {
     setCargando(false);
   }
+}
+
 
   useEffect(() => { cargarReportes(); }, []);
 
@@ -44,8 +107,13 @@ export default function AdminReportes() {
       const fecha = new Date(o.creado_en);
       return (!desde || fecha >= desde) && (!hasta || fecha <= hasta);
     });
-    const exitosas = ordenesPeriodo.filter((o) => o.estado === 'exitosa');
-    const fallidas = ordenesPeriodo.filter((o) => o.estado === 'fallida');
+    const exitosas = ordenesPeriodo.filter(
+      (orden) => orden.estado === 'exitosa'
+    );
+
+    const fallidas = ordenesPeriodo.filter(
+      (orden) => orden.estado === 'fallida'
+    );
     const ventas = exitosas.reduce((s, o) => s + Number(o.total || 0), 0);
     const unidades = datos.productos.reduce((s, p) => s + Number(p.stock || 0), 0);
     const stockBajo = datos.productos.filter((p) => p.stock_critico != null && Number(p.stock) <= Number(p.stock_critico));
