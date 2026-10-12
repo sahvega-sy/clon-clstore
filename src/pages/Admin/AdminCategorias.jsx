@@ -114,32 +114,17 @@ export default function AdminCategorias() {
       }
 
       setMensaje('Categoría actualizada correctamente.');
-   
-      } else {
-        if (categorias.some((cat) => cat.valor === valorNuevo)) {
-          setError('Esa categoría ya existe.');
-          return;
-        }
-
-        setGuardando(true);
-
-        const { error: errorCrear } = await supabase
-          .from('productos')
-          .update({ categoria: valorNuevo })
-          .eq('categoria', '__categoria_nueva__');
-
-        setGuardando(false);
-
-        if (errorCrear) {
-          setError(`No se pudo crear la categoría: ${errorCrear.message}`);
-          return;
-        }
-
-        setMensaje(
-          'La categoría está disponible cuando se asigne a un producto.'
-        );
+    } else {
+      if (categorias.some((cat) => cat.valor === valorNuevo)) {
+        setError('Esa categoría ya existe.');
+        return;
       }
 
+      setError(
+        'Tu tabla productos no tiene una tabla independiente de categorías. Para crear una categoría nueva, primero debes permitir su valor en la restricción CHECK y después asignarla a uno o más productos.'
+      );
+      return;
+    }
 
     cancelarEdicion();
     await cargarProductos();
